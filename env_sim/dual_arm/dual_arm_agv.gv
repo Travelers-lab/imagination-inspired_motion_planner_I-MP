@@ -1,0 +1,38 @@
+digraph G {
+node [shape=box];
+"agv_base_link" [label="agv_base_link"];
+"left_base_link" [label="left_base_link"];
+"left_shoulder_link" [label="left_shoulder_link"];
+"left_upper_arm_link" [label="left_upper_arm_link"];
+"left_forearm_link" [label="left_forearm_link"];
+"left_wrist_1_link" [label="left_wrist_1_link"];
+"left_wrist_2_link" [label="left_wrist_2_link"];
+"left_wrist_3_link" [label="left_wrist_3_link"];
+"wrist4_sensor_link" [label="wrist4_sensor_link"];
+"wrist3_sensor_link" [label="wrist3_sensor_link"];
+"wrist2_sensor_link" [label="wrist2_sensor_link"];
+"wrist1_sensor_link" [label="wrist1_sensor_link"];
+node [shape=ellipse, color=blue, fontcolor=blue];
+"agv_base_link" -> "left_base_link_to_agv_base_link" [label="xyz: 0.262 0.215 1.2465 \nrpy: 1.57079 -2.06823e-13 3.14159"]
+"left_base_link_to_agv_base_link" -> "left_base_link"
+"left_base_link" -> "left_shoulder_link_to_left_base_link" [label="xyz: 0 0 0.1519 \nrpy: 1.5708 -0 0"]
+"left_shoulder_link_to_left_base_link" -> "left_shoulder_link"
+"left_shoulder_link" -> "left_upper_arm_link_to_left_shoulder_link" [label="xyz: -0.244 0 0 \nrpy: 0 -0 0"]
+"left_upper_arm_link_to_left_shoulder_link" -> "left_upper_arm_link"
+"left_upper_arm_link" -> "left_forearm_link_to_left_upper_arm_link" [label="xyz: -0.213 0 0 \nrpy: 0 -0 0"]
+"left_forearm_link_to_left_upper_arm_link" -> "left_forearm_link"
+"left_forearm_link" -> "left_wrist_1_link_to_left_forearm_link" [label="xyz: 0 0 0.131 \nrpy: 1.5708 -0 0"]
+"left_wrist_1_link_to_left_forearm_link" -> "left_wrist_1_link"
+"left_wrist_1_link" -> "left_wrist_2_link_to_left_wrist_1_link" [label="xyz: 0 0 0.085 \nrpy: -1.5708 0 0"]
+"left_wrist_2_link_to_left_wrist_1_link" -> "left_wrist_2_link"
+"left_wrist_2_link" -> "left_wrist_3_link_to_left_wrist_2_link" [label="xyz: 0 0 0.092 \nrpy: 0 -0 0"]
+"left_wrist_3_link_to_left_wrist_2_link" -> "left_wrist_3_link"
+"left_wrist_3_link" -> "wrist4_sensor_to_left_wrist_3_link" [label="xyz: -1.04 0 0.131 \nrpy: 0 -0 0"]
+"wrist4_sensor_to_left_wrist_3_link" -> "wrist4_sensor_link"
+"left_wrist_2_link" -> "wrist3_sensor_to_left_wrist_2_link" [label="xyz: -1.04 0 0.131 \nrpy: 0 -0 0"]
+"wrist3_sensor_to_left_wrist_2_link" -> "wrist3_sensor_link"
+"left_wrist_1_link" -> "wrist2_sensor_to_left_wrist_1_link" [label="xyz: -1.04 0 0.131 \nrpy: 0 -0 0"]
+"wrist2_sensor_to_left_wrist_1_link" -> "wrist2_sensor_link"
+"left_forearm_link" -> "wrist1_sensor_to_left_forearm_link" [label="xyz: -1.04 0 0.131 \nrpy: 0 -0 0"]
+"wrist1_sensor_to_left_forearm_link" -> "wrist1_sensor_link"
+}
