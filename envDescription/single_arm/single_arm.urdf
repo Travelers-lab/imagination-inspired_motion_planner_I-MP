@@ -1,0 +1,286 @@
+<?xml  version="1.0"?>
+<robot name ="dual_arm_agv"> 
+    <!-- Author: Chengjin Wang; e-mail:2210991@tongji.edu.cn. The urdf file was develped in tongji university.-->
+
+    <!--create  color params-->
+    <material name ="LightGrey">
+        <color rgba="0.7 0.7 0.7 1.0"/>
+    </material>
+
+    <!--create mass params
+    <mass name ="agv_base_mass">
+        <mass value="1.0"/>
+    </mass>
+
+    <mass name ="shoulder_mass">
+        <mass value="2.0"/>
+    </mass>
+    <mass name ="upper_arm_mass">
+        <mass value="3.42"/>
+    </mass>
+    <mass name ="forearm_mass">
+        <mass value="1.26"/>
+    </mass>
+    <mass name ="wrist_1_mass">
+        <mass value="0.8"/>
+    </mass>
+    <mass name ="wrist_2_mass">
+        <mass value="0.8"/>
+    </mass>
+    <mass name ="wrist_3_mass">
+        <mass value="0.35"/>
+    </mass>
+-->
+
+
+
+        <!--Create a world.-->
+    <link  name ="World"/>
+
+
+    <joint name="agv_base_link_to_world" type="fixed">
+        <parent link="World"/>
+        <child link="agv_base_link"/>
+        <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+
+    <!--agv_base_link-->
+    <link name = "agv_base_link">
+        <visual>
+            <origin  xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename = "meshes/agv_base_link.STL"/>
+            </geometry >
+            <material name ="LightGrey"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename ="meshes/agv_base_link.STL"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value ="60"/>
+            <inertia ixx="1" ixy="0.0" ixz="0.0" iyy="1" iyz="0.0" izz="1"/>
+        </inertial>
+    </link>
+
+    <!--arm base link to agv base joint-->
+    <joint name="left_base_link_to_agv_base_link" type="fixed">
+        <parent link="agv_base_link"/>
+        <child link="left_base_link"/>
+        <axis xyz="0.0 0.0 1.0"/>
+        <origin xyz="0.262 0.0 1.2465" rpy="1.5708 0.0 0.0 " />
+        <limit lower="-6.28318530718" upper="6.28318530718" effort="56.0" velocity="3.14159265359"/>
+    </joint>
+
+  <!--link chain: arm base link -shouder link- upper link- forearm link- wrist link 1 - wrist link 2 - wrist link3 -->
+    <!--arm base link-->
+    <link name="left_base_link">
+        <visual>
+            <origin xyz="0.0 0.0 0.215" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename ="meshes/base.dae"/>
+            </geometry>
+            <material name = "LightGrey"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.215" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                 <mesh filename = "meshes/base.stl"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value="2.0"/>
+            <inertia ixx="0.003053165" ixy="0.0" ixz="0.0" iyy="0.003053165" iyz="0.0" izz="0.005625"/>
+        </inertial>
+    </link>
+
+    <!--arm joint 1-->
+    <joint name="left_shoulder_link_to_left_base_link" type="fixed">
+            <origin xyz="0.0 0.0 0.36685" rpy="0.0 0.0 3.14159"/>
+            <parent link="left_base_link"/>
+            <child link="left_shoulder_link"/>
+            <axis xyz="0.0 0.0 1.0"/>
+            <limit lower="-6.28318530718" upper="6.28318530718" effort="56.0" velocity="1.5708"/>
+    </joint>
+
+    <!--left shouder link-->
+  
+    <link name="left_shoulder_link">
+        <visual>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename ="meshes/shoulder.dae"/>
+            </geometry>
+            <material name = "LightGrey"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <geometry>
+             <mesh filename ="meshes/shoulder.stl"/>
+        </geometry>
+        </collision>
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0" />
+            <mass value ="2.0"/>
+            <inertia ixx="0.008093163" ixy="0.0" ixz="0.0" iyy="0.008093163" iyz="0.0" izz="0.005625"/>
+        </inertial>
+    </link>
+
+    <!--arm joint 2-->
+    <joint name="left_upper_arm_link_to_left_shoulder_link" type="revolute">
+        <origin xyz="0.0 0.0 0.0" rpy="1.5708 0.0  0.0"/>
+        <parent link="left_shoulder_link"/>
+        <child link="left_upper_arm_link"/>
+        <axis xyz="0.0 0.0 1"/>
+        <limit lower="-6.28318530718" upper="6.28318530718" effort="56.0" velocity="1.5708"/>
+    </joint>
+
+    <!--left upper link -->
+    <link name="left_upper_arm_link">
+        <inertial>
+            <origin xyz="-0.121825 0.0 0.12" rpy="  0.0 1.5708 0.0"/>
+            <mass value ="3.42"/>
+            <inertia ixx="0.021728483" ixy="0.0" ixz="0.0" iyy="0.021728483" iyz="0.0" izz="0.00961875"/>
+        </inertial>
+        <visual >
+            <origin xyz="0.0 0.0 0.1198" rpy="1.5708 0.0 -1.5708 "/>
+            <geometry>
+                <mesh filename="meshes/upperarm.dae"/>
+            </geometry>
+            <material name="LightGrey"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.1198" rpy="1.5708 0.0 -1.5708"/>
+            <geometry>
+                <mesh filename="meshes/upperarm.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!--arm joint 3-->
+    <joint name="left_forearm_link_to_left_upper_arm_link" type="revolute">
+        <origin xyz="-0.24355 0.0 0.0" rpy="0.0 0.0 0.0"/>
+        <parent link="left_upper_arm_link"/>
+        <child link="left_forearm_link"/>
+        <axis xyz="0.0 0.0 1"/>
+        <limit lower="-6.28318530718" upper="6.28318530718" effort="28.0" velocity="1.5708"/>
+    </joint>
+
+    <!---->
+    <link name="left_forearm_link">
+        <inertial>
+            <origin xyz="-0.121825 0.0 0.027" rpy=" 0.0  1.5708 0.0"/>
+            <mass value  = "1.26"/>
+            <inertia ixx="0.006544568" ixy="0.0" ixz="0.0" iyy="0.006544568" iyz="0.0" izz="0.000354375"/>
+        </inertial>
+        <visual >
+            <origin xyz="0.0 0.0 0.0275" rpy="1.5708 0.0 -1.5708"/>
+            <geometry>
+                <mesh filename="meshes/forearm.dae"/>
+            </geometry>
+            <material  name ="LightGrey"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0275" rpy="1.5708 0.0 -1.5708"/>
+            <geometry>
+                <mesh filename="meshes/forearm.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+ <joint name="left_wrist_1_link_to_left_forearm_link" type="fixed">
+        <origin xyz="-0.21325 0.0 0.13105" rpy="0.0 0.0 -1.5708"/>
+        <parent link="left_forearm_link"/>
+        <child link="left_wrist_1_link"/>
+        <axis xyz="0.0 0.0 1"/>
+        <limit lower="-6.28318530718" upper="6.28318530718" effort="12.0" velocity="6.28318530718"/>
+</joint>
+
+
+    <!---->
+    <link name="left_wrist_1_link">
+        <inertial>
+            <origin xyz=" 0.0  0.0  0.0" rpy="0.0  0.0 0.0"/>
+            <mass value  ="0.8"/>
+            <inertia ixx="0.002084999" ixy="0.0" ixz="0.0" iyy="0.002084999" iyz="0.0" izz="0.00225"/>
+        </inertial>
+        <visual>
+            <origin xyz=" 0.0 0.0 -0.13105" rpy="1.5708 0.0 0.0"/>
+            <geometry>
+            <mesh filename="meshes/wrist1.dae"/>
+            </geometry>
+            <material  name ="LightGrey"/>
+        </visual>
+        <collision>
+            <origin xyz=" 0.0 0.0 -0.13105" rpy="1.5708 0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/wrist1.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!--wrist2_joint -->
+    <joint name="left_wrist_2_link_to_left_wrist_1_link" type="fixed">
+        <origin xyz="0.0 -0.08535  -0.027" rpy="1.5708 0.0 0.0"/>
+        <parent link="left_wrist_1_link"/>
+        <child link="left_wrist_2_link"/>
+        <axis xyz="0.0 0.0 1"/>
+        <limit lower="-6.28318530718" upper="6.28318530718" effort="12.0" velocity="6.28318530718"/> 
+    </joint>
+
+    <!---->
+    <link name="left_wrist_2_link">
+        <inertial>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <mass value  = "0.8"/>
+            <inertia ixx="0.002084999" ixy="0.0" ixz="0.0" iyy="0.002084999" iyz="0.0" izz="0.00225"/>
+        </inertial>
+        <visual >
+            <origin xyz="0.0 0.0 -0.08535 " rpy="0.0  0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/wrist2.dae"/>
+            </geometry>
+            <material  name ="LightGrey"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 -0.08535" rpy="0.0  0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/wrist2.stl"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <!--left arm joint 6-->
+    <joint name="left_wrist_3_link_to_left_wrist_2_link" type="fixed">
+        <origin xyz="0.0 0.0921 0.0" rpy="1.5708  3.1415926 3.1415926"/>
+        <parent link="left_wrist_2_link"/>
+        <child link="left_wrist_3_link"/>
+        <axis xyz="0.0 0.0 1"/>
+        <limit lower="-6.28318530718" upper="6.28318530718" effort="12.0" velocity="6.28318530718"/>
+    </joint>
+
+    <!--3-->
+    <link name="left_wrist_3_link">
+        <inertial>
+            <origin xyz="0.0 0.0 -0.0175" rpy="0.0 0.0 0.0"/>
+            <mass value  ="0.35"/>
+            <inertia ixx="0.000136267" ixy="0.0" ixz="0.0" iyy="0.000136267" iyz="0.0" izz="0.0004096"/>
+        </inertial>
+        <visual >
+            <origin xyz="0.0 0.0  -0.085" rpy="1.5708  0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/wrist3.stl"/>
+            </geometry>
+            <material  name ="LightGrey"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0  -0.085" rpy="1.5708  0.0 0.0"/>
+            <geometry>
+                <mesh filename="meshes/wrist3.stl"/>
+            </geometry>
+        </collision>
+    </link>
+</robot>

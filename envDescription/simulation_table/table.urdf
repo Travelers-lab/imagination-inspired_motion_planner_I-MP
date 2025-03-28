@@ -1,0 +1,77 @@
+<?xml  version="1.0"?>
+<robot name ="objects"> 
+    <!-- Author: Chengjin Wang; e-mail:2210991@tongji.edu.cn. The urdf file was develped in tongji university.-->
+
+    <!--create  color params-->
+    <material name ="LightGrey">
+        <color rgba="0.7 0.7 0.7 1.0"/>
+    </material>
+
+    <material name ="White">
+        <color rgba="1 1 1 1.0"/>
+    </material>
+
+    <material name ="Green">
+        <color rgba="0. 1. 0. 1.0"/>
+    </material>
+
+    <material name ="Brone">
+        <color rgba="1.0 0.89 0.7 1"/>
+    </material>
+
+     <material name ="Yellw">
+        <color rgba="1. 1. 0. 1.0"/>
+    </material>
+
+<material name ="Orange">
+        <color rgba="1. 0.38 0. 1.0"/>
+    </material>
+
+    <material name ="Blue">
+        <color rgba="0.69 0.87 0.9 1.0"/>
+    </material>
+
+    <mass name ="table_mass">
+        <mass value="1.0"/>
+    </mass>
+
+    <mass name ="cylander_mass">
+        <mass value="2.0"/>
+    </mass>
+
+
+
+    <link  name ="World"/>
+
+    <joint name="table_link_to_world" type="fixed">
+        <parent link="World"/>
+        <child link="table"/>
+        <origin xyz="0. 0. 0.0" rpy="0.0 0.0 0.0"/>
+    </joint>
+     
+    <link name = "table">
+        <contact>
+            <lateral_friction value="0.05"/>
+            <rolling_friction value="0.0"/>
+            <contact_erp value="1.0"/>
+       </contact>
+        <visual>
+            <origin  xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename = "meshes/clean_table.dae"/>
+            </geometry >
+            <material name ="Brone"/>
+        </visual>
+        <collision>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <geometry>
+                <mesh filename ="meshes/clean_table.STL"/>
+            </geometry>
+        </collision>
+        <inertial>
+            <mass value = "60"/>
+            <origin xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0"/>
+            <inertia ixx="0.837" ixy="0.0" ixz="0.0" iyy="0.837" iyz="0.0" izz="0.15"/>
+        </inertial>
+    </link>
+</robot>

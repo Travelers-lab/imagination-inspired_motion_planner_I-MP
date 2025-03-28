@@ -79,32 +79,35 @@ class RobotKinematics:
 
     def jacobian(self, joint_id, joint_pos):
         J = []
-        ##获得末端关节位姿
         effector_position, effector_rotation, effector_trans_matrix = self.frame_position_and_rotation(joint_id=joint_id, joint_pos=joint_pos)
         for i in range(2):
-            ###获得每一个关节的位置和姿态
-            frame_pos, frame_ori, frame_trans_matrix = self.frame_position_and_rotation(joint_id=i+2, joint_pos=joint_pos[:i+3])
-            ###获得第三列
+            frame_pos, frame_ori, frame_trans_matrix = self.frame_position_and_rotation(joint_id=i+2, joint_pos=joint_pos[:i+2])
+
             z = frame_ori[:3, 2]
             p = np.array(effector_position) - np.array(frame_pos)
             p_c = np.cross(z, p)
-            print("p:{},Z:{} p_c:{}".format(p, z, p_c))
+            # print("p:{},Z:{} p_c:{}".format(p, z, p_c))
             # for j in range(len(p_c)):
             #     if j == 2:
             #         p_c[j] = 1
             J.append(p_c)
         return np.array(J).T
 
-
+##agent_pos: [-0.2340618520975113, 0.5787513256072998]
+##joint_pos:[3.14159, 0.0, -2.6361377326448547, 6.101474176531241, 0, 0, 0]
+##effector_position:[0.34596139 0.55099803 1.14494784]
 
 def main():
     # DH_params = [[1.2465, 3.14159, -0.262, -1.5708], [0.36685, -0.7854, 0, 0], [0, 0, 0, 1.5708], [0, 0, -0.24335, 0],
     #              [0, 0, -0.2132, 0], [0.13105, 0, 0, 1.5708], [0.08355, 0, 0, -1.5708], [0.0921, 0, 0, 0]]
-    ###   DH_params:  [d, theta, a, alpha]2.35619
-    DH_params = [[1.2465, 0, 0.262, 0], [0.36685, 0., 0.0, -1.5708], [0, 0, 0, -1.5708], [0, 0, -0.24335, 0],
-                 [0.13105, 0, -0.2132, 0], [0.08535, 0, 0, 1.5708], [0.0921, 0, 0, -1.5708]]
+    ###   DH_params:  [d, theta, a, alpha]
+    DH_params = [[1.2465, 0, 0.262, 0], [0.36685, 0., 0.0, -1.5708], [0, 0, 0, 1.5708], [0, 0, -0.24335, 0],
+                 [0.00945, 0, -0.2132, 0], [0.08535, 0, 0, 1.5708], [0.0, 0, 0, -1.5708], [0.0921, 0, 0, 0.0]]
+
+    # DH_params = [[1.2465, 0, 0, 0], [0.36685, 0.0, 0.262, -1.5708], [0.11985, 0, 0, 1.5708], [0, 0, -0.24335, 0],
+    #  [-0.00945, 0, -0.2132, 0], [0.0834, 0, 0, 1.5708], [0.0824, 0, 0, -1.5708], [0.0921, 0, 0, 0]]
     robot = RobotKinematics(DH_params)
-    joint_pos = [0.0, 0, 0, 0, 0, 0]
+    joint_pos = [-3.14159, -0.0, 0.0, -1.5708, 0.0, 0, 0, 0]
     position, rotation, matrix = robot.frame_position_and_rotation(6, joint_pos)
     print("position:{}, rotation:{}, matrix:{}".format(position, rotation, matrix))
 
