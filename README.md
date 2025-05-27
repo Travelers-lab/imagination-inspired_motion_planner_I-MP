@@ -66,9 +66,9 @@ You can conduct the toppling inpact test by running the following coammand.
 ```
 python I-MP_topllling_test.py
 ```
-##License
+## License
 This repository is released under the MIT license. See [LICENSE]() for additional details.
-##Acknowledgments
+## Acknowledgments
 We would like to thank the following individuals and organizations for their contributions to this project:
 This work received support from the National Natural Science Foundation of China (No. 62088101), the Science and Technology Commission of Shanghai Municipality (No.2021SHZDZX0100, 22ZR1467100), and the Fundamental Research Funds for the Central Universities (No.22120240291).
 
