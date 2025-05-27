@@ -10,7 +10,7 @@ def approachingData(sensor_transform_matrix):
     rayEndPosition = []
     rayRange = 0.05
     armRadius = 0.042
-    sideOffset = 0.105
+    sideOffset = 0.05
     rayMissColor = [1, 0, 0]
 
     for key in sensor_transform_matrix:

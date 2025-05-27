@@ -10,12 +10,18 @@ from motionPlanner.vector import Vector
 class EnergyState:
 
     def __init__(self, k_att, workspace_dumping, object_dumping, fixed_object_k_rep):
+        # k_att: Attraction force coefficient
+        # workspace_dumping: Damping coefficient for workspace boundaries
+        # object_dumping: Damping coefficient for object interactions
+        # fixed_object_k_rep: Repulsion coefficient for fixed objects
         self.k_att = k_att
         self.workspace_dumping = workspace_dumping
         self.object_dumping = object_dumping
         self.fixed_object_k_rep = fixed_object_k_rep
 
     def attraction_force(self, agent_states, g_star):
+        # agent_states: Dictionary containing agent's state (position, velocity, etc.)
+        # g_star: Desired direction vector (from imaged state calculation)
         if g_star.length > 0.001:
             f_att = g_star * self.k_att + agent_states['vel'] * self.workspace_dumping
         else:
@@ -23,6 +29,9 @@ class EnergyState:
         return f_att
 
     def repulsion_force(self, agent_state, object, g_star):
+        # agent_state: Dictionary containing agent's current state
+        # object: Dictionary containing all objects in environment
+        # g_star: Desired direction vector (from imaged state calculation)
         a = [0] * len(agent_state['pos'].vec_p)
         f_rep_total = Vector(a)
         interacting_force = Vector(a)
@@ -34,39 +43,28 @@ class EnergyState:
                 if object[key]['states'] == 'approaching':
                     if object[key]['attribute'] == None:
                         component_scale = agent_state['vel'].dot(object[key]['direction']) / object[key]['direction'].length ** 2
-                        if component_scale >= 0:
-                            if agent_state['vel'].length != 0 and object[key]['direction'].length <= 0.15:
-                                f_rep_local = (object[key]['direction'] * self.object_dumping) * component_scale
-                            else:
-                                f_rep_local = Vector([0] * len(agent_state['pos'].vec_p))
-                        else:
-                            f_rep_local = Vector([0] * len(agent_state['pos'].vec_p))
-                    elif object[key]['attribute'] == 'operational':
-                        force = [0] * len(agent_state['pos'].vec_p)
-                        f_rep_local = Vector(force)
+                        f_rep_local = (object[key]['direction'] * component_scale) * object[key]['energy_param']
+                    elif object[key]['attribute'] == 'operable':
+                        f_rep_local = object[key]['direction'] * object[key]['energy_param']
                     elif object[key]['attribute'] == 'fixed':
-                        direction = object[key]['center'] - agent_state['pos']
-                        if direction.length <= 0.2:
-                            f_rep_local = direction * self.fixed_object_k_rep / (direction.length * 100)
-                        else:
-                            f_rep_local = Vector([0, 0])
+                        f_rep_local = object[key]['direction'] * object[key]['energy_param']
                 elif object[key]['states'] == 'contacting':
                     if object[key]['attribute'] == None:
                         f_rep_local = Vector([0, 0])
-                    elif object[key]['attribute'] == 'operational':
-                        component_scale = agent_state['vel'].dot(object[key]['direction']) / object[key][
-                            'direction'].length ** 2
-                        agent_to_object_vel = agent_state['vel'] * component_scale
-                        f_rep_local = force
-                        interacting_force = force
+                    elif object[key]['attribute'] == 'operable':
+                        f_rep_local = object[key]['direction'] * object[key]['energy_param'][2]/1000
+                        interacting_force = Vector([0, 0])
                     elif object[key]['attribute'] == 'fixed':
-                        f_rep_local = Vector(object[key]['center']) * self.fixed_object_k_rep / 10
+                        f_rep_local = object[key]['center'] * self.fixed_object_k_rep / 10
                     else:
                         f_rep_local = Vector([0, 0])
                 f_rep_total += f_rep_local
         return f_rep_total, interacting_force
 
     def repulsion_force_2(self, agent_state, object, g_star):
+        # agent_state: Dictionary containing agent's current state
+        # object: Dictionary containing all objects in environment
+        # g_star: Desired direction vector (from imaged state calculation)
         a = [0] * len(agent_state['pos'].vec_p)
         f_rep_total = Vector(a)
         interacting_force = Vector(a)
@@ -81,6 +79,10 @@ class EnergyState:
 
 
     def active_force(self, agent_state, objects, t, g_star):
+        # agent_state: Dictionary containing agent's current state
+        # objects: Dictionary containing all objects in environment
+        # t: Current time step or timestamp
+        # g_star: Desired direction vector (from imaged state calculation)
         offset = 0.4
         omega = 0.5 * math.pi / 100
         direction = g_star

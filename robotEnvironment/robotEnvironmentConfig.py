@@ -50,7 +50,7 @@ class Robot:
         DH_param = [[1.2465, 0, 0.262, 0], [0.36685, 0., 0.0, -1.5708], [0, 0, 0, 1.5708], [0, 0, -0.24335, 0],
                      [0.00945, 0, -0.2132, 0], [0.08535, 0, 0, 1.5708], [0.0, 0, 0, -1.5708], [0.0921, 0, 0, 0.0]]
         self.kinematics = RobotKinematics(DH_param)
-        self.impedance_controller = CartesianImpedanceControl(kp=[10,10], kd=[3,3])
+        self.impedance_controller = CartesianImpedanceControl(kp=[5,5], kd=[1.5, 1.5])
 
         rp = np.array([-1.5708, 2.5, 0, 0, 0, 0.0, 0., 0.0, 0, 0, 0, 0, 0, 0])
         for joint_Index in range(len(self.available_joint_indexes)):
@@ -279,3 +279,8 @@ class Robot:
         self.torque_control_step(virtual_force.tolist(), agent_path)
         safe_contact, contact_force = self._detect_collision_force()
         return safe_contact, contact_force
+
+    def set_impedance_parameter(self, kd, kp):
+        self.impedance_controller.kp = kp
+        self.impedance_controller.kd = kd
+        return

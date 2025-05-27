@@ -13,16 +13,27 @@ import math
 class MotionImagination:
 
     def __init__(self, cfg):
+        # cfg: Configuration object containing parameters for the motion imagination system
+        #   - effect: Influence range parameter
+        #   - facter[k_att]: Attraction force coefficient
+        #   - workspace_dumping: Damping coefficient for workspace boundaries
+        #   - object_dumping: Damping coefficient for object interactions
+        #   - fixed_object_k_rep: Repulsion coefficient for fixed objects
+        #   - workspace: Workspace boundaries or constraints
         self.effect = cfg.effect
         self.environmentEnergy = EnergyState(cfg.facter[cfg.k_att], cfg.workspace_dumping, cfg.object_dumping, cfg.fixed_object_k_rep)
         self.domain = Domain(cfg.effect, cfg.workspace, cfg.fixed_object_k_rep, cfg.object_dumping)
 
     def action_imagination(self, agent_state, target_point, objects):
-        g_star = self.domain.imaged_state(agent_state, target_point)
+        # agent_state: Dictionary containing agent's current state (position, velocity, etc.)
+        # target_point: Desired target position as Vector or list
+        # objects: Dictionary containing all objects in environment
+        g_star = self.domain.imagined_state(agent_state, target_point)
         update_object = self.domain.object_topology(agent_state, objects, g_star, target_point)
         return g_star, update_object
 
     def perception_motion_coordination(self, objects):
+        # objects: Dictionary containing all objects in environment and their states
         mission = 'motion task'
         for key in objects:
             if objects[key]['states'] == 'contacting' and objects[key]['attribute'] == None:
@@ -32,11 +43,16 @@ class MotionImagination:
         return mission
 
     def solving_gradient(self, objects, f_active, t, agent_state, target_point):
+        # objects: Dictionary containing all objects in environment
+        # f_active: Active force vector (used in perception mode)
+        # t: Current time step or timestamp
+        # agent_state: Dictionary containing agent's current state
+        # target_point: Desired target position as Vector or list
         g_star, update_object = self.action_imagination(agent_state, target_point, objects)
         mission = self.perception_motion_coordination(objects)
         if mission == "motion task":
             f_att = self.environmentEnergy.attraction_force(agent_state, g_star)
-            f_rep, f_interact = self.environmentEnergy.repulsion_force_2(agent_state, update_object, g_star)
+            f_rep, f_interact = self.environmentEnergy.repulsion_force(agent_state, update_object, g_star)
             total_force = f_att + f_rep
         else:
             f_interact = self.environmentEnergy.active_force(agent_state=agent_state, objects=objects, t=t, g_star=g_star)
@@ -50,7 +66,8 @@ class MotionImagination:
         planed_force = []
         for i in range(2):
             planed_force.append(total_force.vec_p[i])
-        # print(f'planed_force:{planed_force}, f_rep:{f_rep.vec_p}, f_att:{f_att.vec_p}, f_interact:{f_interact.vec_p}')
+
+
         return planed_force, t, f_rep, f_att, f_interact
 
 

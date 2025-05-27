@@ -12,7 +12,7 @@ class PathExecutionValidator:
         :param robot_urdf_path: The path to the URDF file of the robot.
         """
         # Connect to the PyBullet physics server with GUI mode
-        self.physicsClient = p.connect(p.GUI)
+        self.physicsClient = p.connect(p.DIRECT)
         # Set the search path for PyBullet data
         p.setAdditionalSearchPath(pybullet_data.getDataPath())
         p.setPhysicsEngineParameter(numSolverIterations=50)

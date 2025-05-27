@@ -23,6 +23,12 @@ class EnvironmentUnderstanding:
         return
 
     def implicit_infer(self, hs_sensor_info, objects):
+        # hs_sensor_info: Dictionary containing historical sensor data including:
+        #   - 'force': List of force measurements
+        #   - 'displacement': List of displacement measurements
+        #   - 'velocity': List of velocity measurements
+        # objects: Dictionary containing objects information including:
+        #   - 'physics': Current physical understanding state of the object
         if len(hs_sensor_info['force']) >= 100 and objects["physics"] == 'waiting understanding':
             a1 = len(hs_sensor_info['force']) - 1
             Y = np.array(hs_sensor_info["force"][1:]).reshape(a1, 1)
@@ -46,6 +52,11 @@ class EnvironmentUnderstanding:
         return attribute, physics
 
     def object_understanding(self, sensor_info, hs_sensor_info, objects):
+        # sensor_info: Current sensor data containing:
+        #   - Object positions ('center')
+        #   - Object states ('states')
+        # hs_sensor_info: Historical sensor data for understanding object properties
+        # objects: Dictionary to store and update object information
         for key in sensor_info:
             if key not in objects:
                 objects[key] = {}
@@ -63,9 +74,19 @@ class EnvironmentUnderstanding:
                         hs_sensor_info['contacting'][key], objects[key])
                 else:
                     pass
+        for key in objects:
+            if key not in sensor_info:
+                objects[key]['states'] = "away"
         return
 
     def object_representation(self, robots, sensor_transform_matrix, environment_info, objectsId,  agent_states):
+        # robots: Information about robots in the environment
+        # sensor_transform_matrix: Transformation matrix for sensor data
+        # environment_info: Dictionary containing environment information including:
+        #   - 'hs_sensor_info': Historical sensor data
+        #   - 'objects': Current objects information
+        # objectsId: Identifiers for objects in the environment
+        # agent_states: Current states of agents/robots
         approaching_data = approachingData(sensor_transform_matrix)
         contact_data = contactData(robots, objectsId)
         sensorInfo = sensorInfoUnify(approachingData=approaching_data, agent_states=agent_states, contactData=contact_data)

@@ -5,9 +5,9 @@
       "workspace": [[-1, -1], [2, 2]],
       "facter": [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 1.0, 2, 4],
       "k_att": -1,
-      "workspace_dumping": -10,
-      "fixed_object_k_rep": 4,
-      "object_dumping": -1,
+      "workspace_dumping": -10.0,
+      "fixed_object_k_rep": -4.0,
+      "object_dumping": -20.0,
       "effect": 0.1
     },
   "modeled":
