@@ -12,9 +12,9 @@ This repo contains the imagination-inspired motion planner (I-MP) framework impl
 * Sensory Ablation Tests
 ## Installation
 Our code has been tested on Ubuntu 18.04 and Ubuntu 20.04 with python 3.10 virtual environment and dependencies.
-''''
+'"
 conda create -n i-mp python=3.10
 conda activate i-mp
 pip install -r requirements.txt
-''''
+'"
 
