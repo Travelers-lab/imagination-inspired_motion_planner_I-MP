@@ -52,7 +52,7 @@ class EnergyState:
                     if object[key]['attribute'] == None:
                         f_rep_local = Vector([0, 0])
                     elif object[key]['attribute'] == 'operable':
-                        f_rep_local = object[key]['direction'] * object[key]['energy_param'][2]/1000
+                        f_rep_local = object[key]['direction'] * object[key]['energy_param'][2]/500
                         interacting_force = Vector([0, 0])
                     elif object[key]['attribute'] == 'fixed':
                         f_rep_local = object[key]['center'] * self.fixed_object_k_rep / 10

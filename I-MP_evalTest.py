@@ -1,4 +1,5 @@
 import time
+import random
 import argparse
 import numpy as np
 import pybullet as p
@@ -6,17 +7,17 @@ import pybullet_data as pd
 import multiprocessing as mp
 from omegaconf import OmegaConf
 from os.path import join, dirname, abspath
-
-
 from motionPlanner.vector import Vector
-from utils.utils import write_data_to_csv, evaluate_update
+
 from motionPlanner.motionPlanning import MotionImagination
 from robotEnvironment.robotEnvironmentConfig import Robot
+from testCondition.testScenarioGenerate import generate_obstacle_coords
 from environmentUnderstanding.approachingPerception import tactile_collection
 from environmentUnderstanding.dataProcess import EnvironmentUnderstanding
+from utils.utils import write_data_to_csv, evaluate_update, check_time_difference
 from compared_method.plannerPipeline import ModeledPipeline, SimulatedPipeline, SampledPipeline, ImagedPipeline
 from compared_method.simulation_basedPlanner.externalSimulator import PathExecutionValidator
-timeStep = 1 / 120
+timeStep = 1 / 240
 
 def load_config():
     cfg = OmegaConf.load(join(dirname(abspath(__file__)), 'config/planningConfig.json'))
@@ -31,14 +32,15 @@ def add_arg():
     return args
 
 
-def set_environment(obj_num, fixed_prob):
+def set_environment(coords, fixed_prob):
     client1 = p.connect(p.GUI)
     p.setAdditionalSearchPath(pd.getDataPath())
     p.setPhysicsEngineParameter(numSolverIterations=50)
     p.setGravity(0, 0, -9.8, physicsClientId=client1)
     p.setTimeStep(timeStep)
     robot_urdf = join(dirname(abspath(__file__)), 'envDescription/single_arm/left_arm.urdf')
-    robot = Robot(bullet_client=p, path=robot_urdf, obj_num=obj_num, fixed_prob=fixed_prob, clint_id=client1)
+    robot = Robot(bullet_client=p, path=robot_urdf, clint_id=client1)
+    robot.load_environment(coordinate=coords, fix_prob=0)
     return robot, client1
 
 def variable_reset():
@@ -211,10 +213,6 @@ def planner_test(num_obj, fixed_prob):
     test_condition.append(f'object number: {str(num_obj)}')
     test_condition.append(f'fixation probability: {str(fixed_prob)}')
 
-
-
-
-
     # environment info variables
     hsSensorInfo = {}
     objects = {}
@@ -325,26 +323,80 @@ def planner_test(num_obj, fixed_prob):
 
 
 
+# if __name__ == "__main__":
+#     # try:
+#     #     planner_test(num_obj=0, fixed_prob=0)
+#     # except KeyboardInterrupt:
+#     #     pass
+#     queue_traj = mp.Queue()
+#     queue_result = mp.Queue()
+#     queue_mission = mp.Queue()
+#     queue_obstacles = mp.Queue()
+#
+#     num_obj = 0
+#     fixed_prob = 0
+#     cfg = load_config()
+#
+#
+#     p1 = mp.Process(target=simulator_1, args=(queue_traj, queue_result, queue_mission, num_obj, fixed_prob, cfg))
+#     p2 = mp.Process(target=simulator_2, args=(cfg, queue_traj, queue_result, queue_obstacles, queue_mission))
+#
+#     p1.start()
+#     p2.start()
+#
+#     p1.join()
+#     p2.join()
+
+
+def i_mp_planner(cfg):
+    object_num = random.randint(1, 5)
+    coords = generate_obstacle_coords(object_num)
+    fixed_prob = random.uniform(0, 1)
+    robot, client1 = set_environment(coords=coords, fixed_prob=fixed_prob)
+
+
+
+    path_lengths = [0.313, 0.605, 0.855]
+    target_points = [[0.6, 0.1], [0.75, 0.35], [0.6, 0.55]]
+
+    # load planner
+    imaged_planner = ImagedPipeline(cfg.imaged)
+
+    # set simulation
+    f_active = Vector([0, 0])
+    t = 0
+    lines = 0
+    local_time = time.time()
+
+    environment_info, evaluate_metrics, target_sequence, agent_path = variable_reset()
+    target_point = Vector(target_points[target_sequence])
+    set_planning = True
+    while set_planning:
+        agent_state = robot.get_effector_states()
+        if (target_point - agent_state['pos']).length <= 0.005:
+            target_sequence += 1
+            print(f'target_sequence:{target_sequence}')
+            if target_sequence == len(target_points):
+                print("complete the task!")
+                break
+            else:
+                target_point = Vector(target_points[target_sequence])
+        if check_time_difference(local_time) == False:
+            evaluate_metrics['path_cost'] = (evaluate_metrics['path_cost'] / path_lengths[
+                len(target_points) - 1]) * 100
+            print("exceed time limit")
+            break
+        actuation_force, t = imaged_planner.forward(robot, environment_info, agent_state, f_active,
+                                                    target_point, t)
+        safe_interact = robot.torque_control_step(actuation_force, agent_path)
+        evaluate_metrics, agent_path = evaluate_update(evaluate_metrics, timeStep, agent_state,
+                                                       agent_path)
+        p.stepSimulation(physicsClientId=client1)
+        time.sleep(timeStep)
+
+    p.disconnect(physicsClientId=client1)
+
+
 if __name__ == "__main__":
-    # try:
-    #     planner_test(num_obj=0, fixed_prob=0)
-    # except KeyboardInterrupt:
-    #     pass
-    queue_traj = mp.Queue()
-    queue_result = mp.Queue()
-    queue_mission = mp.Queue()
-    queue_obstacles = mp.Queue()
-
-    num_obj = 0
-    fixed_prob = 0
     cfg = load_config()
-
-
-    p1 = mp.Process(target=simulator_1, args=(queue_traj, queue_result, queue_mission, num_obj, fixed_prob, cfg))
-    p2 = mp.Process(target=simulator_2, args=(cfg, queue_traj, queue_result, queue_obstacles, queue_mission))
-
-    p1.start()
-    p2.start()
-
-    p1.join()
-    p2.join()
+    i_mp_planner(cfg)
