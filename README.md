@@ -17,4 +17,7 @@ conda create -n i-mp python=3.10
 conda activate i-mp
 pip install -r requirements.txt
 ```
+## About Configs and Logs
+Before evaluation, we first introduce the configuration and logging structure.
+Configs: all the specific parameters used for I-MP evaluation are indicated in ./config/planningConfig.json. If you would like to play with other parameters, feel free to copy the existing config file and modify it. You will then just need to change the config file path in the following training steps to point to the new configuration file.
 
