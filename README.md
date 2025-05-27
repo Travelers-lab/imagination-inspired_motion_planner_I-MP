@@ -1,4 +1,4 @@
-# motion_imagination_planner
+# Imagination-inspired Motion Planner (I-MP)
 Chengjin Wang, Yanmin Zhou, Zhipeng Wang, Zheng Yan, Feng Luan, Shuo Jiang, Runjie Shen, Hongrui Sang, Bin He
 ## Overview
 This repo contains the imagination-inspired motion planner (I-MP) framework implementation for paper "A Reliable Robot Motion Planner in Complex Real-world Environments via Action Imagination".
