@@ -36,7 +36,7 @@ Before evaluation, we first introduce the configuration and logging structure.
 **Planner Test:**
 To test the I-MP planner in pybullet simulator, run the following command.
 ```
-python planner_eval.py
+python I-MP_evalTest.py
 ```
 **Baseline Comaprison:**
 To conduct the baseline comparison with simulation-based, model-based, probability-based planning methods, you can either create a test scenario first or use the previously randomly generated one..
@@ -57,12 +57,12 @@ python stressTestGeneration.py
 ```
 Next, perform the stress-testing simulation by executing the code below.
 ```
-python I-MP_stress_testing.py
+python I-MP_stressTesting.py
 ```
 **Toplling Impact Testing:**
 You can conduct the toppling inpact test by running the following coammand.
 ```
-python I-MP_topllling_test.py
+python I-MP_toplllingTest.py
 ```
 ## License
 This repository is released under the MIT license. See [LICENSE](https://github.com/Travelers-lab/imagination-inspired_motion_planner_I-MP/blob/main/LICENSE) for additional details.
